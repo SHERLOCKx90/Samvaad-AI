@@ -67,6 +67,8 @@ body {
 	scale: 1.2 !important;
 }
 
+
+
 .recording {
 	filter: brightness(70%);
 	animation: pulse 1s infinite alternate;
@@ -88,6 +90,9 @@ body {
 }
 
 .box {
+    overflow-y: scroll; /* Enable scrolling */
+    scrollbar-color: rgb(44, 44, 44) rgb(70, 70, 70);
+    scrollbar-width: thin;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     background-color: var(--blur-bg);
@@ -130,6 +135,7 @@ body {
 
 .conversation .user-input {
     max-height: 10vh;
+    overflow: hidden !important;
 }
 
 .conversation .user-input input {
@@ -432,7 +438,6 @@ input:checked+.switch-label:after {
 }
 
 .disable-scrollbars::-webkit-scrollbar {
-  background: transparent; /* Chrome/Safari/Webkit */
   width: 0px;
 }
     
@@ -460,13 +465,6 @@ select {
     padding: 8px 16px;
 
     appearance: none;
-}
-
-.input-box {
-    display: flex;
-    align-items: center;
-    padding-right: 15px;
-    cursor: pointer;
 }
 
 .info {
@@ -513,6 +511,14 @@ select {
     gap: 16px;
     overflow: auto;
 }
+
+.input-box {
+    overflow: hidden !important;
+    display: flex;
+    align-items: center;
+    padding-right: 15px;
+    cursor: pointer;
+}       
 
 #message-input{
 	margin-top: 35px;
@@ -660,7 +666,7 @@ a:-webkit-any-link {
     font-size: 15px;
     width: 100%;
     height: 100%;
-    padding: 12px 15px;
+    padding: 12px 15px !important;
     background: none;
     border: none;
     outline: none;
@@ -739,6 +745,28 @@ a:-webkit-any-link {
     white-space: nowrap;
     width: 1px;
 }
+
+/* Width and color of the scrollbar */
+.row .conversations::-webkit-scrollbar {
+    width: 4px; /* Adjust the width as desired */
+    background-color: #ff0000; /* Set the background color */
+  }
+  
+  /* Style for the scrollbar thumb (the draggable part) */
+  .row .conversations::-webkit-scrollbar-thumb {
+    background-color: #ff0000; /* Set the color of the thumb */
+    border-radius: 4px; /* Add rounded corners if desired */
+  }
+  
+  /* Style for the scrollbar thumb on hover */
+  .row .conversations::-webkit-scrollbar-thumb:hover {
+    background-color: #ff0000; /* Set the color of the thumb on hover */
+  }
+  
+  /* Style for the scrollbar track (the area behind the thumb) */
+  .row .conversations::-webkit-scrollbar-track {
+    background-color: #ff0000; /* Set the color of the track */
+  }
 
 
 /* .color-picker>fieldset {
