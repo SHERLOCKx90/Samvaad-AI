@@ -46,6 +46,32 @@ body {
 
 /* own css */
 
+
+#greeting {
+    font-size: 48px; /* Adjust font size as needed */
+    animation: greetings 10s infinite alternate; /* Animation details */
+    position: relative; /* Needed for proper positioning of pseudo-element */
+  }
+  
+  #greeting::before {
+    content: "Hello"; /* Initial content */
+    position: absolute; /* Positions the pseudo-element on top of the text */
+    top: 0; left: 0; /* Aligns the pseudo-element with the text */
+    width: 100%; /* Ensures the pseudo-element covers the entire text width */
+    animation: greetings-content 10s infinite alternate; /* Separate animation for content */
+  }
+  
+  @keyframes greetings-content {
+    0% { color: transparent; content: "Hello"; } /* Transparent initially */
+    16.66% { color: #0288D1; content: "नमस्ते"; } /* Hindi */
+    33.33% { color: #F7931A; content: "வணக்கம்"; } /* Telugu */
+    50% { color: #2ECC71; content: "హలో"; } /* Tamil */
+    66.66% { color: #E74C3C; content: "సుస్వాగత"; } /* Kannada */
+    83.33% { color: #9B59B6; content: "ഹലോ"; } /* Malayalam */
+    100% { color: transparent; content: "Hello"; } /* Transparent again */
+  }
+  
+
 .speaker-button{
     margin-top: 8px;
     scale: 1.3;
@@ -745,29 +771,6 @@ a:-webkit-any-link {
     white-space: nowrap;
     width: 1px;
 }
-
-/* Width and color of the scrollbar */
-.row .conversations::-webkit-scrollbar {
-    width: 4px; /* Adjust the width as desired */
-    background-color: #ff0000; /* Set the background color */
-  }
-  
-  /* Style for the scrollbar thumb (the draggable part) */
-  .row .conversations::-webkit-scrollbar-thumb {
-    background-color: #ff0000; /* Set the color of the thumb */
-    border-radius: 4px; /* Add rounded corners if desired */
-  }
-  
-  /* Style for the scrollbar thumb on hover */
-  .row .conversations::-webkit-scrollbar-thumb:hover {
-    background-color: #ff0000; /* Set the color of the thumb on hover */
-  }
-  
-  /* Style for the scrollbar track (the area behind the thumb) */
-  .row .conversations::-webkit-scrollbar-track {
-    background-color: #ff0000; /* Set the color of the track */
-  }
-
 
 /* .color-picker>fieldset {
     border: 0;
