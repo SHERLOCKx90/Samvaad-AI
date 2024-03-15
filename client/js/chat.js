@@ -105,6 +105,9 @@ speaker.addEventListener('click', function() {
 });
 // END
 
+
+
+
 function resizeTextarea(textarea) {
   textarea.style.height = '80px';
   textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
@@ -162,6 +165,10 @@ const ask_gpt = async (message) => {
     window.token = message_id();
 
     stop_generating.classList.remove(`stop_generating-hidden`);
+
+    //hides greeting message
+    const greeting = document.getElementById('greeting');
+    greeting.classList.add('hide-greeting');
 
     message_box.innerHTML += `
             <div class="message">

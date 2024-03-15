@@ -46,30 +46,43 @@ body {
 
 /* own css */
 
+.hide-greeting{
+    opacity: 0;
+    transition: opacity 2s ease; /* Define transition for opacity change */
+}
 
 #greeting {
-    font-size: 48px; /* Adjust font size as needed */
-    animation: greetings 10s infinite alternate; /* Animation details */
-    position: relative; /* Needed for proper positioning of pseudo-element */
+    font-family:'Poppins';
+    margin: 20px 20px;
+    font-size: 48px;
+    position: relative;
   }
   
   #greeting::before {
-    content: "Hello"; /* Initial content */
-    position: absolute; /* Positions the pseudo-element on top of the text */
-    top: 0; left: 0; /* Aligns the pseudo-element with the text */
-    width: 100%; /* Ensures the pseudo-element covers the entire text width */
-    animation: greetings-content 10s infinite alternate; /* Separate animation for content */
+    content: "Hello, how may I help you?"; 
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%;
+    animation: greetings-content 20s linear infinite; /* Separate animation for content */
   }
   
   @keyframes greetings-content {
-    0% { color: transparent; content: "Hello"; } /* Transparent initially */
-    16.66% { color: #0288D1; content: "नमस्ते"; } /* Hindi */
-    33.33% { color: #F7931A; content: "வணக்கம்"; } /* Telugu */
-    50% { color: #2ECC71; content: "హలో"; } /* Tamil */
-    66.66% { color: #E74C3C; content: "సుస్వాగత"; } /* Kannada */
-    83.33% { color: #9B59B6; content: "ഹലോ"; } /* Malayalam */
-    100% { color: transparent; content: "Hello"; } /* Transparent again */
+    0% { color: #c2a5ee; content: "Hello, how may I help you?"; } 
+    2.2% { color: #c2a5ee; content: "Hello, how may I help you?"; } 
+    12.4% { color: #2ECC71; content: "नमस्ते, how may I help you?"; } 
+    24.6% { color: #e57842; content: "வணக்கம், how may I help you?"; } 
+    32.8% { color: #34dfc8; content: "ਸਤਸ੍ਰੀਕਾਲ, how may I help you?"; } 
+    41% { color: #c07315; content: "వణ్ణక్, how may I help you?"; } 
+    49.2% { color: #b437e6; content: "ഹലോ, how may I help you?"; } 
+    57.4% { color: #953232; content: "नमस्कार, how may I help you?"; }
+    65.6% { color: #64a1dd; content: "સ્વાગત, how may I help you?"; } 
+    73.8% { color: #e09040; content: "ନମସ୍ಕର, how may I help you?"; } 
+    82% { color: #dbea31; content: "নমস্কার, how may I help you?"; } 
+    100% { color: #953232; content: "Hello, how may I help you?"; }
   }
+  
+  
+  
   
 
 .speaker-button{
