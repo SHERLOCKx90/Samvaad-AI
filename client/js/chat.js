@@ -8,7 +8,7 @@ const image_upload = document.getElementById('imgUploadInput')
 const audio_icon = document.getElementById('audioIcon');
 const colorThemes = document.querySelectorAll('[name="theme"]');
 const markdown = window.markdownit(); 
-const message_box = document.getElementById(`messages`); 
+const message_box = document.getElementById(`messages`);  
 const message_input = document.getElementById(`message-input`);
 const box_conversations = document.querySelector(`.top`);
 const spinner = box_conversations.querySelector(".spinner");
@@ -19,6 +19,19 @@ const image_button = document.querySelector(`#image-button`);
 let prompt_lock = false;
 
 hljs.addPlugin(new CopyButtonPlugin());
+
+
+
+// sidebar TOGGLE FUNCTIONALITY
+const desktopSidebarToggle = document.querySelector(".desktop-sidebar-toggle");
+const sidebar = document.querySelector(".conversations");
+
+desktopSidebarToggle.addEventListener("click", (event) => {
+  sidebar.classList.toggle("shown");
+  sidebar.classList.toggle("hidden");
+  event.target.classList.toggle("rotated");
+  window.scrollTo(0, 0);
+});
 
 
 // IMAGE UPLOAD FUNCTIONALITY
@@ -235,177 +248,126 @@ const new_conversation = async () => {
   location.reload();
 };
 
-const ask_gpt = async (message) => {
-	console.log("ask_gpt() loaded")
-	try {
-	  message_input.value = ``;
-	  message_input.innerHTML = ``;
-	  message_input.innerText = ``;
-  
-	  add_conversation(window.conversation_id, message.substr(0, 20));
-	  window.scrollTo(0, 0);
-	  window.controller = new AbortController();
-  
-	  jailbreak = document.getElementById("jailbreak");
-	  model = document.getElementById("model");
-	  prompt_lock = true;
-	  window.text = ``;
-	  window.token = message_id();
-  
-	  stop_generating.classList.remove(`stop_generating-hidden`);
-  
-	  // HIDES GREETING MESSAGE ON CONVO START
+const ask_gpt = async (message, image_base64 = null) => {
+  try {
+    message_input.value = ``;
+    message_input.innerHTML = ``;
+    message_input.innerText = ``;
+
+    add_conversation(window.conversation_id, message.substr(0, 20));
+    window.scrollTo(0, 0);
+    window.controller = new AbortController();
+
+    prompt_lock = true;
+    window.text = ``;
+    window.token = message_id();
+
+    stop_generating.classList.remove(`stop_generating-hidden`);
+
+    // HIDES GREETING MESSAGE ON CONVO START
 	  greeting.classList.remove('show-greeting');
 	  greeting.classList.add('hide-greeting');
-  
-	  message_box.innerHTML += `
-			  <div class="message">
-				  <div class="user">
-					  ${user_image}
-				  </div>
-				  <div class="content" id="user_${token}"> 
-					  ${format(message)}
-				  </div>
-			  </div>
-		  `;
-  
-	  /* .replace(/(?:\r\n|\r|\n)/g, '<br>') */
-  
-	  message_box.scrollTop = message_box.scrollHeight;
-	  window.scrollTo(0, 0);
-	  await new Promise((r) => setTimeout(r, 500));
-	  window.scrollTo(0, 0);
-  
-	  message_box.innerHTML += `
-			  <div class="message">
-				  <div class="user">
-					  ${gpt_image} 
-				  </div>
-				  <div class="content" id="gpt_${window.token}">
-					  <div id="cursor"></div>
-				  </div>
-			  </div>
-		  `;
-  
-	  message_box.scrollTop = message_box.scrollHeight;
-	  window.scrollTo(0, 0);
-	  await new Promise((r) => setTimeout(r, 1000));
-	  window.scrollTo(0, 0);
-  
-	  const response = await fetch(`/backend-api/v2/conversation`, {
-		method: `POST`,
-		signal: window.controller.signal,
-		headers: {
-		  "content-type": `application/json`,
-		  accept: `text/event-stream`,
-		},
-		body: JSON.stringify({
-		  conversation_id: window.conversation_id,
-		  action: `_ask`,
-		  model: model.options[model.selectedIndex].value,
-		  jailbreak: jailbreak.options[jailbreak.selectedIndex].value,
-		  meta: {
-			id: window.token,
-			content: {
-			  conversation: await get_conversation(window.conversation_id),
-			  internet_access: document.getElementById("switch").checked,
-			  content_type: "text",
-			  parts: [
-				{
-				  content: message,
-				  role: "user",
-				},
-			  ],
-			},
-		  },
-		}),
-	  });
-  
-	  const reader = response.body.getReader();
-  
-	  while (true) {
-		const { value, done } = await reader.read();
-		if (done) break;
-  
-		chunk = new TextDecoder().decode(value);
-  
-		if (
-		  chunk.includes(
-			`<form id="challenge-form" action="/backend-api/v2/conversation?`
-		  )
-		) {
-		  chunk = `cloudflare token expired, please refresh the page.`;
-		}
-  
-		text += chunk;
-  
-		// const objects         = chunk.match(/({.+?})/g);
-  
-		// try { if (JSON.parse(objects[0]).success === false) throw new Error(JSON.parse(objects[0]).error) } catch (e) {}
-  
-		// objects.forEach((object) => {
-		//     console.log(object)
-		//     try { text += h2a(JSON.parse(object).content) } catch(t) { console.log(t); throw new Error(t)}
-		// });
-  
-		document.getElementById(`gpt_${window.token}`).innerHTML =
-		  markdown.render(text);
-		document.querySelectorAll(`code`).forEach((el) => {
-		  hljs.highlightElement(el);
-		});
-  
-		window.scrollTo(0, 0);
-		message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
-	  }
-  
-	  // if text contains :
-	  if (
-		text.includes(
-		  `instead. Maintaining this website and API costs a lot of money`
-		)
-	  ) {
-		document.getElementById(`gpt_${window.token}`).innerHTML =
-		  "An error occured, please reload / refresh cache and try again.";
-	  }
-  
-	  add_message(window.conversation_id, "user", message);
-	  add_message(window.conversation_id, "assistant", text);
-  
-	  message_box.scrollTop = message_box.scrollHeight;
-	  await remove_cancel_button();
-	  prompt_lock = false;
-  
-	  await load_conversations(20, 0);
-	  window.scrollTo(0, 0);
-	} catch (e) {
-	  add_message(window.conversation_id, "user", message);
-  
-	  message_box.scrollTop = message_box.scrollHeight;
-	  await remove_cancel_button();
-	  prompt_lock = false;
-  
-	  await load_conversations(20, 0);
-  
-	  console.log(e);
-  
-	  let cursorDiv = document.getElementById(`cursor`);
-	  if (cursorDiv) cursorDiv.parentNode.removeChild(cursorDiv);
-  
-	  if (e.name != `AbortError`) {
-		let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
-  
-		document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
-		add_message(window.conversation_id, "assistant", error_message);
-	  } else {
-		document.getElementById(`gpt_${window.token}`).innerHTML += ` [aborted]`;
-		add_message(window.conversation_id, "assistant", text + ` [aborted]`);
-	  }
-  
-	  window.scrollTo(0, 0);
-	}
-  };
 
-  function hideGreeting() {
+    message_box.innerHTML += `
+            <div class="message">
+                <div class="user">
+                    ${user_image}
+                </div>
+                <div class="content" id="user_${token}"> 
+                    ${format(message)}
+                </div>
+            </div>
+        `;
+
+    /* .replace(/(?:\r\n|\r|\n)/g, '<br>') */
+
+    message_box.scrollTop = message_box.scrollHeight;
+    window.scrollTo(0, 0);
+    await new Promise((r) => setTimeout(r, 500));
+    window.scrollTo(0, 0);
+
+    message_box.innerHTML += `
+            <div class="message">
+                <div class="user">
+                    ${gpt_image} 
+                </div>
+                <div class="content" id="gpt_${window.token}">
+                    <div id="cursor"></div>
+                </div>
+            </div>
+        `;
+
+    message_box.scrollTop = message_box.scrollHeight;
+    window.scrollTo(0, 0);
+    await new Promise((r) => setTimeout(r, 1000));
+    window.scrollTo(0, 0);
+
+    const response = await fetch(`/backend-api/v2/conversation`, {
+      method: `POST`,
+      headers: {
+        "content-type": `application/json`,
+      },
+      body: JSON.stringify({
+        message,
+        is_image: image_base64 !== null,
+        image_base64,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      text = data.response;
+      document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
+      document.querySelectorAll(`code`).forEach((el) => {
+        hljs.highlightElement(el);
+      });
+
+      add_message(window.conversation_id, "user", message);
+      add_message(window.conversation_id, "assistant", text);
+    } else {
+      let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
+      document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
+      add_message(window.conversation_id, "assistant", error_message);
+      console.error(data.error);
+    }
+
+    message_box.scrollTop = message_box.scrollHeight;
+    await remove_cancel_button();
+    prompt_lock = false;
+
+    await load_conversations(20, 0);
+    window.scrollTo(0, 0);
+  } catch (e) {
+    add_message(window.conversation_id, "user", message);
+
+    message_box.scrollTop = message_box.scrollHeight;
+    await remove_cancel_button();
+    prompt_lock = false;
+
+    await load_conversations(20, 0);
+
+    console.log(e);
+
+    let cursorDiv = document.getElementById(`cursor`);
+    if (cursorDiv) cursorDiv.parentNode.removeChild(cursorDiv);
+
+    if (e.name != `AbortError`) {
+      let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
+
+      document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
+      add_message(window.conversation_id, "assistant", error_message);
+    } else {
+      document.getElementById(`gpt_${window.token}`).innerHTML += ` [aborted]`;
+      add_message(window.conversation_id, "assistant", text + ` [aborted]`);
+    }
+
+    window.scrollTo(0, 0);
+  }
+};
+
+  
+function hideGreeting() {
     greeting.classList.remove('show-greeting');
     greeting.classList.add('hide-greeting');
 }

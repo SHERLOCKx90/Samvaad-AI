@@ -2,25 +2,19 @@
 
 
 :root {
-    --colour-1: #968a71; /* main background color */
+    --colour-1: #a79777; /* main background color */
     --colour-3: #103604; /* text color */
     --blur-bg: #DED0B6; /* main conversation box color */
     --conversations: #16380c; /* accent color (icons)
 
-
     #433419 old accent, (dark brownish cream)
-
     /* --colour-2: #ccc; 
-    	
     --colour-4: #f0f0f0;
     --colour-5: #181818;
     --colour-6: #242424;
-
     /* --accent: #8b3dff; */
-    
     /* --blur-border: #84719040;
-    --user-input: #b700ff;  */
-    
+    --user-input: #b700ff;  */  
 }
 
 :root {
@@ -37,7 +31,7 @@
     font-family: var(--font-1);
 }
 
-html,
+html, 
 body {
     scroll-behavior: smooth;
     overflow: hidden;
@@ -117,6 +111,46 @@ body {
 }
 
 
+/*  akshan*/
+
+
+.desktop-sidebar-toggle {
+    display: none;
+  }
+  
+  @media (min-width: 991px) {
+    .desktop-sidebar-toggle {
+      display: block;
+      position: absolute;
+      z-index: 100000;
+      top: 0;
+      left: 0;
+      margin: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background-color: var(--blur-bg);
+      border-radius: 10px;
+      border: 1px solid var(--blur-border);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.33s;
+    }
+  }
+
+  .conversations.hidden {
+    display: none;
+  }
+
+  .desktop-sidebar-toggle{
+    border: 2px solid #423e2a;
+  }
+
+/* akshan   */
 
 .recording {
 	filter: brightness(70%);
@@ -233,6 +267,7 @@ body {
     gap: 16px;
     flex: auto;
     min-width: 0;
+    height: 95vh !important;
 }
 
 .conversations .title {
@@ -346,7 +381,7 @@ body {
     cursor: pointer;
     user-select: none;
     background: transparent;
-    border: 1.5px dashed var(--conversations);
+    border: 2px dashed var(--conversations);
     border-radius: var(--border-radius-1);
 }
 
@@ -377,7 +412,7 @@ body {
     
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius-1);
-    border: 1.5px solid var(--colour-3);
+    border: 2px solid var(--colour-3);
 
     padding: 10px 15px;
     color: var(--colour-3);
@@ -434,7 +469,7 @@ input[type="checkbox"] {
 }
 
 .field select{
-    border: 1px solid var(--colour-3);
+    border: 2px solid var(--colour-3);
     border-radius: var(--border-radius-1);
     position: relative;
 }
@@ -467,7 +502,7 @@ input[type="checkbox"] {
     -webkit-backdrop-filter: blur(20px);
     background-color: var(--blur-bg);
     border-radius: var(--border-radius-1);
-    border: 1.5px solid var(--colour-3);
+    border: 2px solid var(--colour-3);
     display: block;
     border-radius: 100px;
     position: relative;
@@ -496,14 +531,14 @@ input:checked+.switch-label:after {
     left: calc(100% - 5px - 20px);
 }
 
-.buttons {
+/* .buttons {
 	padding-bottom:50px!important;
     min-height: 10vh;
     display: flex;
     align-items: start;
     justify-content: center;
     width: 100%;
-}
+} */
 
 
 .disable-scrollbars::-webkit-scrollbar {
@@ -525,7 +560,7 @@ select {
 
     cursor: pointer;
     background-color: var(--blur-bg);
-    border: 1px solid var(--blur-border);
+    border: 2px solid var(--blur-border);
     color: var(--colour-3);
     display: block;
     position: relative;
@@ -574,7 +609,7 @@ select {
     cursor: pointer;
     user-select: none;
     background: transparent;
-    border: 1.5px solid var(--colour-3);
+    border: 2px solid var(--colour-3);
     border-radius: var(--border-radius-1);
     width: fit-content;
 }
@@ -591,6 +626,9 @@ select {
     padding-right: 15px;
     cursor: pointer;
 }       
+.space{
+    height: 3vh;
+}
 
 #message-input{
 	margin-top: 35px;
@@ -697,7 +735,7 @@ ul {
 @media screen and (max-width: 990px) {
     .conversations {
         display: none;
-        width: 100%;
+        width: 95%;
         max-width: none;
     }
 
