@@ -339,6 +339,78 @@ class Backend_Api:
                 data = response.json()
                 image_url = data["output"]["image_url"]
                 return image_url
+        def i2t(self,base64,user_message,language):
+            if language=="en":
+                payload = {
+                    "model": "accounts/fireworks/models/firellava-13b",
+                    "max_tokens": 2048,
+                    "top_p": 1,
+                    "top_k": 40,
+                    "presence_penalty": 0,
+                    "frequency_penalty": 0,
+                    "temperature": 0.6,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": user_message
+                                },
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{base64}"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            
+                response = requests.request("POST", self.fireworks_url, headers=self.fireworks_headers, data=json.dumps(payload))
+                llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
+                return llm_response
+            else:
+                bhasa_api = BhasaAPI()
+                translated_text = bhasa_api.nmt(user_message, source_lang=language, target_lang="en")
+                payload = {
+                    "model": "accounts/fireworks/models/firellava-13b",
+                    "max_tokens": 2048,
+                    "top_p": 1,
+                    "top_k": 40,
+                    "presence_penalty": 0,
+                    "frequency_penalty": 0,
+                    "temperature": 0.6,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": user_message
+                                },
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{base64}"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            
+                response = requests.request("POST", self.fireworks_url, headers=self.fireworks_headers, data=json.dumps(payload))
+                llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
+                translated_text1 = bhasa_api.nmt(llm_response, source_lang="en", target_lang=language)
+                return translated_text1
+                
+
+                
+    
+
+            
 
 
     
@@ -350,12 +422,14 @@ class Backend_Api:
             is_image = request.json.get('is_image', False)
             language = request.json.get('language', 'English')
             output = request.json.get('output')
+            imgbase = request.json.get('imagebase')
 
             multimodal_ai = self.MultimodalAI()
+            response = ''
 
-            if is_image:
-                image_base64 = request.json['image_base64']
-                response = multimodal_ai.generate_text_from_image(image_base64, message)
+            if imgbase:
+                if output=="txt":
+                    response = multimodal_ai.i2t(imgbase,message,language)
             else:
                 if output=="txt":
                     response = multimodal_ai.t2t(language,message)

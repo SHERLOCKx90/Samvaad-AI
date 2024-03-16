@@ -103,6 +103,7 @@ function startRecording() {
         chunks = [];
       };
 
+      console.log(baseaudio)
       mediaRecorder.start();
     })
     .catch(err => {
