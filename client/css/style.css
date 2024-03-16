@@ -484,7 +484,10 @@ input[type="checkbox"] {
 }
 
 
-    
+.response-image{
+    max-width: 400px;
+}
+
 .field {
     height: fit-content;
     display: flex;

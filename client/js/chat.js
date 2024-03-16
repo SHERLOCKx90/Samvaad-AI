@@ -36,24 +36,32 @@ desktopSidebarToggle.addEventListener("click", (event) => {
 });
 
 
-// IMAGE UPLOAD FUNCTIONALITY
-image_upload.addEventListener('change', function(event) {
-	const file = event.target.files[0];
 
-	if (file) {
-		// You can perform additional checks/validation here
-
-		// Assuming you have a function to send the image to the ChatGPT assistant
-		sendImageToAssistant(file);
-	}
-});
-
-function sendImageToAssistant(file) {
-	// Implement your logic to send the image to the ChatGPT assistant
-	// You can use AJAX, fetch API, or any other method to send the image data to your backend
-	// Once the image is sent, you can handle the response from the assistant
+function openFilePicker() {
+  const fileInput = document.getElementById('image-upload');
+  fileInput.click();
 }
-// END 
+
+const fileInput = document.getElementById('image-upload');
+fileInput.addEventListener('change', handleImageUpload);
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    // Handle the uploaded image here
+    const reader = new FileReader();
+    reader.onload = function () {
+      // The reader.result contains the base64-encoded image data
+      const imageData = reader.result;
+      // Do something with the imageData, e.g., send it to the server or display it
+      console.log(imageData);
+    }
+    reader.readAsDataURL(file);
+  } else {
+    // Handle the case where the selected file is not an image
+    console.error('Please select an image file.');
+  }
+}
 
 	
 //	AUDIO INPUT FUNCTIONALITY
@@ -304,6 +312,7 @@ const ask_gpt = async (message, image_base64 = null) => {
         is_image: image_base64 !== null,
         image_base64,
         language: document.getElementById('language').value,
+        output: document.getElementById('mode').value,
         baseaudio1 : baseaudio
       }),
     });
@@ -321,6 +330,7 @@ const ask_gpt = async (message, image_base64 = null) => {
         const img = document.createElement('img');
         img.src = data.response;
         img.alt = 'Response Image';
+        img.className = 'response-image'
         img.onerror = () => {
           img.alt = 'Image failed to load';
         };

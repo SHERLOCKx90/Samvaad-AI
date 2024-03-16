@@ -298,6 +298,49 @@ class Backend_Api:
                 llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
                 translated_text = bhasa_api.nmt(llm_response, source_lang="en", target_lang=input_language)
                 return translated_text
+        def t2i(self,input_language,user_message):
+            if input_language=="en":
+                payload = {
+                    "input": {
+                    "prompt": user_message,
+                    "num_inference_steps": 50,
+                    "refiner_inference_steps": 60,
+                    "width": 1024,
+                    "height": 1024,
+                    "guidance_scale": 10,
+                    "strength": 0.5,
+                    "seed": None,
+                    "num_images": 1,
+                    "negative_prompt": "bad anatomy, bad hands, three hands, three legs, bad arms, missing legs, missing arms, poorly drawn face, bad face, fused face, cloned face, worst face, three crus, extra crus, fused crus, worst feet, three feet, fused feet, fused thigh, three thigh, fused thigh, extra thigh, worst thigh, missing fingers, extra fingers, ugly fingers, long fingers, horn, extra eyes, huge eyes, 2girl, amputation, disconnected limbs, cartoon, cg, 3d, unreal, animate"
+                    }
+                }
+                response = requests.post(self.runpod_url, json=payload, headers=self.runpod_headers)
+                data = response.json()
+                image_url = data["output"]["image_url"]
+                return image_url
+            else:
+                bhasa_api = BhasaAPI()
+                translated_text = bhasa_api.nmt(user_message, source_lang=input_language, target_lang="en")
+                payload = {
+                    "input": {
+                    "prompt": user_message,
+                    "num_inference_steps": 50,
+                    "refiner_inference_steps": 60,
+                    "width": 1024,
+                    "height": 1024,
+                    "guidance_scale": 10,
+                    "strength": 0.5,
+                    "seed": None,
+                    "num_images": 1,
+                    "negative_prompt": "bad anatomy, bad hands, three hands, three legs, bad arms, missing legs, missing arms, poorly drawn face, bad face, fused face, cloned face, worst face, three crus, extra crus, fused crus, worst feet, three feet, fused feet, fused thigh, three thigh, fused thigh, extra thigh, worst thigh, missing fingers, extra fingers, ugly fingers, long fingers, horn, extra eyes, huge eyes, 2girl, amputation, disconnected limbs, cartoon, cg, 3d, unreal, animate"
+                    }
+                }
+                response = requests.post(self.runpod_url, json=payload, headers=self.runpod_headers)
+                data = response.json()
+                image_url = data["output"]["image_url"]
+                return image_url
+
+
     
 
 
@@ -306,6 +349,7 @@ class Backend_Api:
             message = request.json['message']
             is_image = request.json.get('is_image', False)
             language = request.json.get('language', 'English')
+            output = request.json.get('output')
 
             multimodal_ai = self.MultimodalAI()
 
@@ -313,14 +357,16 @@ class Backend_Api:
                 image_base64 = request.json['image_base64']
                 response = multimodal_ai.generate_text_from_image(image_base64, message)
             else:
-                response = multimodal_ai.t2t(language,message)
+                if output=="txt":
+                    response = multimodal_ai.t2t(language,message)
+                elif output=="img":
+                    response = multimodal_ai.t2i(language,message)
+
                 
-                link = r"https://14068d66ba387efac9ce5e4b1741bcf2.r2.cloudflarestorage.com/sls/03-24/sync-7175ecae-c5a8-40e2-9430-498eb7fc8a5f-e1/eedd24ca.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=0f059df39ab45a0cdab74b629b7951a5%2F20240316%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240316T175908Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a1a52e90d6cb5d274e4b504aca17467f0cf6e9d483adb09aaa5cc8908306a7a8"
                 
 
-            return {'success': True, 'response': link}, 200
+            return {'success': True, 'response': response}, 200
 
         except Exception as e:
             print(e)
             return {'success': False, 'error': str(e)}, 400
-

@@ -11,3 +11,22 @@
     alt="Description of the image">
 </body>
 </html>
+
+
+// IMAGE UPLOAD FUNCTIONALITY
+image_upload.addEventListener('change', function(event) {
+	const file = event.target.files[0];
+
+	if (file) {
+		// You can perform additional checks/validation here
+
+		// Assuming you have a function to send the image to the ChatGPT assistant
+		sendImageToAssistant(file);
+	}
+});
+
+function sendImageToAssistant(file) {
+	// Implement your logic to send the image to the ChatGPT assistant
+	// You can use AJAX, fetch API, or any other method to send the image data to your backend
+	// Once the image is sent, you can handle the response from the assistant
+}
