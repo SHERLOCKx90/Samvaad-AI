@@ -2,6 +2,146 @@ from flask import request
 import requests
 import json
 import base64
+class BhasaAPI:
+    def __init__(self):
+        self.base_url = "https://bhasa-api.onrender.com"
+
+    def asr(self, base64_audio, source_lang="bn"):
+        """
+        Performs Automatic Speech Recognition (ASR) on the provided base64-encoded audio.
+
+        Args:
+            base64_audio (str): Base64-encoded audio data.
+            source_lang (str, optional): Source language code (default is 'bn').
+
+        Returns:
+            str: Transcribed text from the audio.
+        """
+        url = f"{self.base_url}/asr"
+        payload = json.dumps({
+            "sourceLang": source_lang,
+            "base64Audio": base64_audio
+        })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, data=payload)
+        return json.loads(response.text)["text"]
+
+    def asr_nmt(self, base64_audio, source_lang="hi", target_lang="en"):
+        """
+        Performs Automatic Speech Recognition (ASR) and Neural Machine Translation (NMT)
+        on the provided base64-encoded audio.
+
+        Args:
+            base64_audio (str): Base64-encoded audio data.
+            source_lang (str, optional): Source language code (default is 'hi').
+            target_lang (str, optional): Target language code (default is 'en').
+
+        Returns:
+            str: Translated text from the audio.
+        """
+        url = f"{self.base_url}/asr_nmt"
+        payload = json.dumps({
+            "sourceLang": source_lang,
+            "targetLang": target_lang,
+            "base64Audio": base64_audio
+        })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, data=payload)
+        return response.text
+
+    def asr_nmt_tts(self, base64_audio, source_lang="hi", target_lang="en", gender="male"):
+        """
+        Performs Automatic Speech Recognition (ASR), Neural Machine Translation (NMT),
+        and Text-to-Speech (TTS) on the provided base64-encoded audio.
+
+        Args:
+            base64_audio (str): Base64-encoded audio data.
+            source_lang (str, optional): Source language code (default is 'hi').
+            target_lang (str, optional): Target language code (default is 'en').
+            gender (str, optional): Gender for TTS voice (default is 'male').
+
+        Returns:
+            str: Base64-encoded audio data of the translated text.
+        """
+        url = f"{self.base_url}/asr_nmt_tts"
+        payload = json.dumps({
+            "sourceLang": source_lang,
+            "targetLang": target_lang,
+            "base64Audio": base64_audio,
+            "gender": gender
+        })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, data=payload)
+        return response.text
+
+    def nmt(self, text, source_lang="hi", target_lang="en"):
+        """
+        Performs Neural Machine Translation (NMT) on the provided text.
+
+        Args:
+            text (str): Input text to be translated.
+            source_lang (str, optional): Source language code (default is 'hi').
+            target_lang (str, optional): Target language code (default is 'en').
+
+        Returns:
+            str: Translated text.
+        """
+        url = f"{self.base_url}/nmt"
+        payload = json.dumps({
+            "sourceLang": source_lang,
+            "targetLang": target_lang,
+            "text": text
+        })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, data=payload)
+        return json.loads(response.text)["translatedText"]
+
+    def nmt_tts(self, text, source_lang="en", target_lang="hi", gender="female"):
+        """
+        Performs Neural Machine Translation (NMT) and Text-to-Speech (TTS)
+        on the provided text.
+
+        Args:
+            text (str): Input text to be translated and synthesized.
+            source_lang (str, optional): Source language code (default is 'en').
+            target_lang (str, optional): Target language code (default is 'hi').
+            gender (str, optional): Gender for TTS voice (default is 'female').
+
+        Returns:
+            str: URI of the Base64-encoded audio data of the translated text.
+        """
+        url = f"{self.base_url}/nmt_tts"
+        payload = json.dumps({
+            "sourceLang": source_lang,
+            "targetLang": target_lang,
+            "text": text,
+            "gender": gender
+        })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, data=payload)
+        return response.json()["audioBase64"]["audioUri"]
+
+    def tts(self, text, source_lang="hi", gender="male"):
+        """
+        Performs Text-to-Speech (TTS) on the provided text.
+
+        Args:
+            text (str): Input text to be synthesized.
+            source_lang (str, optional): Source language code (default is 'hi').
+            gender (str, optional): Gender for TTS voice (default is 'male').
+
+        Returns:
+            str: Base64-encoded audio data of the synthesized text.
+        """
+        url = f"{self.base_url}/tts"
+        payload = json.dumps({
+            "sourceLang": source_lang,
+            "text": text,
+            "gender": gender
+        })
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, headers=headers, data=payload)
+        return response.text
 
 class Backend_Api:
     def __init__(self, app, config: dict) -> None:
@@ -106,11 +246,66 @@ class Backend_Api:
             response = requests.request("POST", self.fireworks_url, headers=self.fireworks_headers, data=json.dumps(payload))
             llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
             return llm_response
+        def t2t(self, input_language, user_message):
+            if input_language=="en":
+                fireworks_headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.fireworks_api_key}"
+                }
+                payload = {
+                    "model": "accounts/fireworks/models/mixtral-8x7b-instruct",
+                    "max_tokens": 4096,
+                    "top_p": 1,
+                    "top_k": 40,
+                    "presence_penalty": 0,
+                    "frequency_penalty": 0,
+                    "temperature": 0.6,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": user_message
+                        }
+                    ]
+                }
+                response = requests.request("POST","https://api.fireworks.ai/inference/v1/chat/completions", headers=fireworks_headers, data=json.dumps(payload))
+                llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
+                return llm_response
+            else:
+                bhasa_api = BhasaAPI()
+                translated_text = bhasa_api.nmt(user_message, source_lang=input_language, target_lang="en")
+                fireworks_headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.fireworks_api_key}"
+                }
+                payload = {
+                    "model": "accounts/fireworks/models/mixtral-8x7b-instruct",
+                    "max_tokens": 4096,
+                    "top_p": 1,
+                    "top_k": 40,
+                    "presence_penalty": 0,
+                    "frequency_penalty": 0,
+                    "temperature": 0.6,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": user_message
+                        }
+                    ]
+                }
+                response = requests.request("POST","https://api.fireworks.ai/inference/v1/chat/completions", headers=fireworks_headers, data=json.dumps(payload))
+                llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
+                translated_text = bhasa_api.nmt(llm_response, source_lang="en", target_lang=input_language)
+                return translated_text
+    
+
 
     def _conversation(self):
         try:
             message = request.json['message']
             is_image = request.json.get('is_image', False)
+            language = request.json.get('language', 'English')
 
             multimodal_ai = self.MultimodalAI()
 
@@ -118,7 +313,8 @@ class Backend_Api:
                 image_base64 = request.json['image_base64']
                 response = multimodal_ai.generate_text_from_image(image_base64, message)
             else:
-                response = multimodal_ai.generate_text(message)
+                response = multimodal_ai.t2t(language,message)
+
 
             return {'success': True, 'response': response}, 200
 

@@ -301,8 +301,23 @@ const ask_gpt = async (message, image_base64 = null) => {
     });
 
     const data = await response.json();
+    console.log(data);
+    console.log("hi");
 
     if (data.success) {
+
+      // case: image ouput 
+      const response = data.response;
+      if (typeof response === 'string' && response.includes('cloudflarestorage')) {
+        const imageUrl = response;
+
+        const imgElement = document.createElement('img');
+        imgElement.src = imageUrl;
+        document.body.appendChild(imgElement);
+
+      }
+
+      // case : text output
       text = data.response;
       document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
       document.querySelectorAll(`code`).forEach((el) => {
@@ -373,11 +388,6 @@ const load_conversation = async (conversation_id) => {
             <div class="message">
                 <div class="user">
                     ${item.role == "assistant" ? gpt_image : user_image}
-                    <!--${
-                      item.role == "assistant"
-                        ? `<i class="fa-regular fa-phone-arrow-down-left"></i>`
-                        : `<i class="fa-regular fa-phone-arrow-up-right"></i>`
-                    } -->
                 </div>
                 <div class="content">
                     ${
