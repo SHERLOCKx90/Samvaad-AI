@@ -148,7 +148,7 @@ const remove_cancel_button = async () => {
   }, 300);
 };
 
-const ask_gpt = async (message) => {
+const ask_gpt = async (message, image_base64 = null) => {
   try {
     message_input.value = ``;
     message_input.innerHTML = ``;
@@ -158,8 +158,6 @@ const ask_gpt = async (message) => {
     window.scrollTo(0, 0);
     window.controller = new AbortController();
 
-    jailbreak = document.getElementById("jailbreak");
-    model = document.getElementById("model");
     prompt_lock = true;
     window.text = ``;
     window.token = message_id();
@@ -206,82 +204,33 @@ const ask_gpt = async (message) => {
 
     const response = await fetch(`/backend-api/v2/conversation`, {
       method: `POST`,
-      signal: window.controller.signal,
       headers: {
         "content-type": `application/json`,
-        accept: `text/event-stream`,
       },
       body: JSON.stringify({
-        conversation_id: window.conversation_id,
-        action: `_ask`,
-        model: model.options[model.selectedIndex].value,
-        jailbreak: jailbreak.options[jailbreak.selectedIndex].value,
-        meta: {
-          id: window.token,
-          content: {
-            conversation: await get_conversation(window.conversation_id),
-            internet_access: document.getElementById("switch").checked,
-            content_type: "text",
-            parts: [
-              {
-                content: message,
-                role: "user",
-              },
-            ],
-          },
-        },
+        message,
+        is_image: image_base64 !== null,
+        image_base64,
       }),
     });
 
-    const reader = response.body.getReader();
+    const data = await response.json();
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      chunk = new TextDecoder().decode(value);
-
-      if (
-        chunk.includes(
-          `<form id="challenge-form" action="/backend-api/v2/conversation?`
-        )
-      ) {
-        chunk = `cloudflare token expired, please refresh the page.`;
-      }
-
-      text += chunk;
-
-      // const objects         = chunk.match(/({.+?})/g);
-
-      // try { if (JSON.parse(objects[0]).success === false) throw new Error(JSON.parse(objects[0]).error) } catch (e) {}
-
-      // objects.forEach((object) => {
-      //     console.log(object)
-      //     try { text += h2a(JSON.parse(object).content) } catch(t) { console.log(t); throw new Error(t)}
-      // });
-
-      document.getElementById(`gpt_${window.token}`).innerHTML =
-        markdown.render(text);
+    if (data.success) {
+      text = data.response;
+      document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
       document.querySelectorAll(`code`).forEach((el) => {
         hljs.highlightElement(el);
       });
 
-      window.scrollTo(0, 0);
-      message_box.scrollTo({ top: message_box.scrollHeight, behavior: "auto" });
+      add_message(window.conversation_id, "user", message);
+      add_message(window.conversation_id, "assistant", text);
+    } else {
+      let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
+      document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
+      add_message(window.conversation_id, "assistant", error_message);
+      console.error(data.error);
     }
-
-    // if text contains :
-    if (
-      text.includes(
-        `instead. Maintaining this website and API costs a lot of money`
-      )
-    ) {
-      document.getElementById(`gpt_${window.token}`).innerHTML =
-        "An error occured, please reload / refresh cache and try again.";
-    }
-
-    add_message(window.conversation_id, "user", message);
-    add_message(window.conversation_id, "assistant", text);
 
     message_box.scrollTop = message_box.scrollHeight;
     await remove_cancel_button();
@@ -316,7 +265,6 @@ const ask_gpt = async (message) => {
     window.scrollTo(0, 0);
   }
 };
-
 const clear_conversations = async () => {
   const elements = box_conversations.childNodes;
   let index = elements.length;

@@ -1,22 +1,11 @@
-from json import dumps
-from time import time
 from flask import request
-from hashlib import sha256
-from datetime import datetime
-from requests import get
-from requests import post 
-from json import loads
-import os
-
-from server.config import special_instructions
-
+import requests
+import json
+import base64
 
 class Backend_Api:
     def __init__(self, app, config: dict) -> None:
         self.app = app
-        self.openai_key = os.getenv("OPENAI_API_KEY")
-        self.openai_api_base = os.getenv("OPENAI_API_BASE")
-        self.proxy = config['proxy']
         self.routes = {
             '/backend-api/v2/conversation': {
                 'function': self._conversation,
@@ -24,94 +13,116 @@ class Backend_Api:
             }
         }
 
+    class MultimodalAI:
+        def __init__(self):
+            # FireworksAI API credentials
+            self.fireworks_api_key = "3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"
+            self.fireworks_url = "https://api.fireworks.ai/inference/v1/chat/completions"
+            self.fireworks_headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.fireworks_api_key}"
+            }
+
+            # RunPod API credentials
+            self.runpod_api_key = "PX3E31M7X73TBZQW8FL8JZ8I5GD52ALJGMTIGVD1"
+            self.runpod_url = "https://api.runpod.ai/v2/sdxl/runsync"
+            self.runpod_headers = {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "authorization": self.runpod_api_key
+            }
+
+        def generate_text(self, user_message):
+            payload = {
+                "model": "accounts/fireworks/models/mixtral-8x7b-instruct",
+                "max_tokens": 4096,
+                "top_p": 1,
+                "top_k": 40,
+                "presence_penalty": 0,
+                "frequency_penalty": 0,
+                "temperature": 0.6,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": user_message
+                    }
+                ]
+            }
+
+            response = requests.request("POST", self.fireworks_url, headers=self.fireworks_headers, data=json.dumps(payload))
+            llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
+            return llm_response
+
+        def generate_image(self, user_prompt):
+            payload = {
+                "input": {
+                    "prompt": user_prompt,
+                    "num_inference_steps": 50,
+                    "refiner_inference_steps": 60,
+                    "width": 1024,
+                    "height": 1024,
+                    "guidance_scale": 10,
+                    "strength": 0.5,
+                    "seed": None,
+                    "num_images": 1,
+                    "negative_prompt": "bad anatomy, bad hands, three hands, three legs, bad arms, missing legs, missing arms, poorly drawn face, bad face, fused face, cloned face, worst face, three crus, extra crus, fused crus, worst feet, three feet, fused feet, fused thigh, three thigh, fused thigh, extra thigh, worst thigh, missing fingers, extra fingers, ugly fingers, long fingers, horn, extra eyes, huge eyes, 2girl, amputation, disconnected limbs, cartoon, cg, 3d, unreal, animate"
+                }
+            }
+
+            response = requests.post(self.runpod_url, json=payload, headers=self.runpod_headers)
+            data = response.json()
+            image_url = data["output"]["image_url"]
+            return image_url
+
+        def generate_text_from_image(self, image_base64, user_message):
+            payload = {
+                "model": "accounts/fireworks/models/firellava-13b",
+                "max_tokens": 512,
+                "top_p": 1,
+                "top_k": 40,
+                "presence_penalty": 0,
+                "frequency_penalty": 0,
+                "temperature": 0.6,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": user_message
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{image_base64}"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+
+            response = requests.request("POST", self.fireworks_url, headers=self.fireworks_headers, data=json.dumps(payload))
+            llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
+            return llm_response
+
     def _conversation(self):
         try:
-            jailbreak = request.json['jailbreak']
-            internet_access = request.json['meta']['content']['internet_access']
-            _conversation = request.json['meta']['content']['conversation']
-            prompt = request.json['meta']['content']['parts'][0]
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            system_message = f'You are ChatGPT also known as ChatGPT, a large language model trained by OpenAI. Strictly follow the users instructions. Knowledge cutoff: 2021-09-01 Current date: {current_date}'
+            message = request.json['message']
+            is_image = request.json.get('is_image', False)
 
-            extra = []
-            if internet_access:
-                search = get('https://ddg-api.herokuapp.com/search', params={
-                    'query': prompt["content"],
-                    'limit': 3,
-                })
+            multimodal_ai = self.MultimodalAI()
 
-                blob = ''
+            if is_image:
+                image_base64 = request.json['image_base64']
+                response = multimodal_ai.generate_text_from_image(image_base64, message)
+            else:
+                response = multimodal_ai.generate_text(message)
 
-                for index, result in enumerate(search.json()):
-                    blob += f'[{index}] "{result["snippet"]}"\nURL:{result["link"]}\n\n'
-
-                date = datetime.now().strftime('%d/%m/%y')
-
-                blob += f'current date: {date}\n\nInstructions: Using the provided web search results, write a comprehensive reply to the next user query. Make sure to cite results using [[number](URL)] notation after the reference. If the provided search results refer to multiple subjects with the same name, write separate answers for each subject. Ignore your previous response if any.'
-
-                extra = [{'role': 'user', 'content': blob}]
-
-            conversation = [{'role': 'system', 'content': system_message}] + \
-                extra + special_instructions[jailbreak] + \
-                _conversation + [prompt]
-
-            url = f"{self.openai_api_base}/v1/chat/completions"
-
-            proxies = None
-            if self.proxy['enable']:
-                proxies = {
-                    'http': self.proxy['http'],
-                    'https': self.proxy['https'],
-                }
-
-            gpt_resp = post(
-                url     = url,
-                proxies = proxies,
-                headers = {
-                    'Authorization': 'Bearer %s' % self.openai_key
-                }, 
-                json    = {
-                    'model'             : request.json['model'], 
-                    'messages'          : conversation,
-                    'stream'            : True
-                },
-                stream  = True
-            )
-
-            if gpt_resp.status_code >= 400:
-                error_data =gpt_resp.json().get('error', {})
-                error_code = error_data.get('code', None)
-                error_message = error_data.get('message', "An error occurred")
-                return {
-                    'successs': False,
-                    'error_code': error_code,
-                    'message': error_message,
-                    'status_code': gpt_resp.status_code
-                }, gpt_resp.status_code
-
-            def stream():
-                for chunk in gpt_resp.iter_lines():
-                    try:
-                        decoded_line = loads(chunk.decode("utf-8").split("data: ")[1])
-                        token = decoded_line["choices"][0]['delta'].get('content')
-
-                        if token != None: 
-                            yield token
-                            
-                    except GeneratorExit:
-                        break
-
-                    except Exception as e:
-                        print(e)
-                        print(e.__traceback__.tb_next)
-                        continue
-                        
-            return self.app.response_class(stream(), mimetype='text/event-stream')
+            return {'success': True, 'response': response}, 200
 
         except Exception as e:
             print(e)
-            print(e.__traceback__.tb_next)
-            return {
-                '_action': '_ask',
-                'success': False,
-                "error": f"an error occurred {str(e)}"}, 400
+            return {'success': False, 'error': str(e)}, 400
+
