@@ -594,6 +594,16 @@ document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
   window.scrollTo(0, 0);
 });
 
+const desktopSidebarToggle = document.querySelector(".desktop-sidebar-toggle");
+const sidebar = document.querySelector(".conversations");
+
+desktopSidebarToggle.addEventListener("click", (event) => {
+  sidebar.classList.toggle("shown");
+  sidebar.classList.toggle("hidden");
+  event.target.classList.toggle("rotated");
+  window.scrollTo(0, 0);
+});
+
 const register_settings_localstorage = async () => {
   settings_ids = ["switch", "model", "jailbreak"];
   settings_elements = settings_ids.map((id) => document.getElementById(id));
