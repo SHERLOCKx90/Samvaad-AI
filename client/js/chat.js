@@ -230,9 +230,13 @@ const set_conversation = async (conversation_id) => {
   await load_conversations(20, 0, true);
 };
 
-const new_conversation = async () => {
+function hideGreeting() {
+  greeting.classList.remove('show-greeting');
+  greeting.classList.add('hide-greeting');
+}
 
-  console.log("new_convn() loaded")
+const new_conversation = async () => {
+  console.log("new_convn() loaded");
   history.pushState({}, null, `/chat/`);
   window.conversation_id = uuid();
 
@@ -245,8 +249,9 @@ const new_conversation = async () => {
   greeting.classList.add('show-greeting');
   console.log(greeting.classList);
 
-  location.reload();
+  hideGreeting(); // Call the hideGreeting function here
 };
+
 
 const ask_gpt = async (message, image_base64 = null) => {
   try {
@@ -374,7 +379,9 @@ function hideGreeting() {
 
 
 const load_conversation = async (conversation_id) => {
-	console.log("load_convn() loaded")
+  console.log("load_convn() loaded");
+  hideGreeting(); // Call hideGreeting function here
+
   let conversation = await JSON.parse(
     localStorage.getItem(`conversation:${conversation_id}`)
   );
