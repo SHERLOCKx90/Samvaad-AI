@@ -499,6 +499,11 @@ input[type="checkbox"] {
     color: var(--colour-3);
 }
 
+.user-settings{
+    margin-left: -20px;
+    display: flex;
+    flex-direction: row !important;
+}
 .switch-label {
     cursor: pointer;
     text-indent: -9999px;

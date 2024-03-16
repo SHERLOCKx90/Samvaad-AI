@@ -3,6 +3,8 @@ const query = (obj) =>
     .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]))
     .join("&");
 
+let baseaudio; 
+let baseaudio1;
 const greeting = document.getElementById('greeting');
 const image_upload = document.getElementById('imgUploadInput')
 const audio_icon = document.getElementById('audioIcon');
@@ -71,6 +73,8 @@ audio_icon.addEventListener('click', () => {
 });
 
 function startRecording() {
+
+  
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
       mediaRecorder = new MediaRecorder(stream);
@@ -85,7 +89,7 @@ function startRecording() {
         const reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onloadend = () => {
-          const baseaudio = reader.result.split(',')[1];
+          baseaudio = reader.result.split(',')[1];
         };
         chunks = [];
       };
@@ -288,6 +292,8 @@ const ask_gpt = async (message, image_base64 = null) => {
     await new Promise((r) => setTimeout(r, 1000));
     window.scrollTo(0, 0);
 
+    
+
     const response = await fetch(`/backend-api/v2/conversation`, {
       method: `POST`,
       headers: {
@@ -298,24 +304,37 @@ const ask_gpt = async (message, image_base64 = null) => {
         is_image: image_base64 !== null,
         image_base64,
         language: document.getElementById('language').value,
-        baseaudio : baseaudio
+        baseaudio1 : baseaudio
 
 
       }),
     });
 
-    const data = await response.json();
-    //console.log(data);
+    ///
 
+    const data = await response.json();
+    
     if (data.success) {
-      text = data.response;
-      document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
-      document.querySelectorAll(`code`).forEach((el) => {
-        hljs.highlightElement(el);
-      });
+      const responseContainer = document.getElementById(`gpt_${window.token}`);
+      responseContainer.innerHTML = ''; // Clear the previous response
+
+      if (data.response.includes('cloudflarestorage')) {
+        // It's an image
+        const img = document.createElement('img');
+        img.src = data.response;
+        img.alt = 'Response Image';
+        responseContainer.appendChild(img);
+      } else {
+        // It's a text response
+        text = data.response;
+        responseContainer.innerHTML = markdown.render(text);
+        document.querySelectorAll(`code`).forEach((el) => {
+          hljs.highlightElement(el);
+        });
+      }
 
       add_message(window.conversation_id, "user", message);
-      add_message(window.conversation_id, "assistant", text);
+      add_message(window.conversation_id, "assistant", data.response);
     } else {
       let error_message = `oops ! something went wrong, please try again / reload. [stacktrace in console]`;
       document.getElementById(`gpt_${window.token}`).innerHTML = error_message;
