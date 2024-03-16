@@ -473,7 +473,17 @@ input[type="checkbox"] {
     border: 2px solid var(--colour-3);
     border-radius: var(--border-radius-1);
     position: relative;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Style for background image */
+    background-image: url("../img/arrow-down-s-fill.png");
+    background-repeat: no-repeat;
+    background-position: right center;
 }
+
+
     
 .field {
     height: fit-content;
@@ -584,7 +594,13 @@ select {
     width: fit-content;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
+}
+
+.button-label{
+    font-size: 13px;
+    margin-left: 15px;
+    margin-bottom: -13px;
 }
 
 .top {
