@@ -138,6 +138,7 @@ body {
     width: 100%;
     border-radius: var(--border-radius-1);
     border: 1px solid var(--blur-border);
+    text-align: center;
 }
 
 .conversations {
