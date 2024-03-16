@@ -105,19 +105,6 @@ function stopRecording() {
 
 // SPEAKER TOGGLE FUNCTIONALITY
 
-const speaker = document.getElementById("speakerToggle")
-speaker.addEventListener('click', function() {
-	// Check current icon class
-	if (speaker.classList.contains('fa-volume-high')) {
-		// If current icon is heart, change it to star
-		speaker.classList.remove('fa-volume-high');
-		speaker.classList.add('fa-volume-xmark');
-	} else {
-		// If current icon is star, change it to heart
-		speaker.classList.remove('fa-volume-xmark');
-		speaker.classList.add('fa-volume-high');
-	}
-});
 // END
 
 
