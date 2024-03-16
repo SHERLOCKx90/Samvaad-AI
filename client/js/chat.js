@@ -259,7 +259,7 @@ const ask_gpt = async (message, image_base64 = null) => {
                     ${user_image}
                 </div>
                 <div class="content" id="user_${token}"> 
-                    ${format(message)}
+                    <b>${format(message)}</b>
                 </div>
             </div>
         `;
@@ -301,23 +301,9 @@ const ask_gpt = async (message, image_base64 = null) => {
     });
 
     const data = await response.json();
-    console.log(data);
-    console.log("hi");
+    //console.log(data);
 
     if (data.success) {
-
-      // case: image ouput 
-      const response = data.response;
-      if (typeof response === 'string' && response.includes('cloudflarestorage')) {
-        const imageUrl = response;
-
-        const imgElement = document.createElement('img');
-        imgElement.src = imageUrl;
-        document.body.appendChild(imgElement);
-
-      }
-
-      // case : text output
       text = data.response;
       document.getElementById(`gpt_${window.token}`).innerHTML = markdown.render(text);
       document.querySelectorAll(`code`).forEach((el) => {
@@ -332,6 +318,8 @@ const ask_gpt = async (message, image_base64 = null) => {
       add_message(window.conversation_id, "assistant", error_message);
       console.error(data.error);
     }
+
+    /// 
 
     message_box.scrollTop = message_box.scrollHeight;
     await remove_cancel_button();

@@ -360,6 +360,7 @@ body {
     flex-direction: column;
     gap: 18px;
     min-width: 0;
+    padding-bottom: 27px;
 }
 
 .message .content p,
