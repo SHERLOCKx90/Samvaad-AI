@@ -6,7 +6,7 @@
     --colour-3: #103604; /* text color */
     --blur-bg: #DED0B6; /* main conversation box color */
     --conversations: #16380c; /* accent color (icons)
-
+ 
     #433419 old accent, (dark brownish cream)
     /* --colour-2: #ccc; 
     --colour-4: #f0f0f0;
@@ -473,12 +473,7 @@ input[type="checkbox"] {
     border-radius: var(--border-radius-1);
     position: relative;
 }
-
-.field select:focus {
-    position: absolute;
-    top: calc(-100% - 15px);
-}
-
+    
 .field {
     height: fit-content;
     display: flex;

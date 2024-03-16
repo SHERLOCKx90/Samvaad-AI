@@ -103,13 +103,6 @@ function stopRecording() {
 // END
 
 
-// SPEAKER TOGGLE FUNCTIONALITY
-
-// END
-
-
-
-
 function resizeTextarea(textarea) {
   textarea.style.height = '80px';
   textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
@@ -303,6 +296,7 @@ const ask_gpt = async (message, image_base64 = null) => {
         message,
         is_image: image_base64 !== null,
         image_base64,
+        language: document.getElementById('language').value
       }),
     });
 
