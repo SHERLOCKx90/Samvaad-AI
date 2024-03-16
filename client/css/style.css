@@ -58,7 +58,7 @@ body {
   }
   
   #greeting::before {
-    content: "Hello, how may I help you?"; 
+    content: "Hello, please select your language!"; 
     position: absolute; 
     top: 0; left: 0; 
     width: 100%;
@@ -66,18 +66,17 @@ body {
   }
   
   @keyframes greetings-content {
-    0% { color: #c2a5ee; content: "Hello, how may I help you?"; } 
-    2.2% { color: #c2a5ee; content: "Hello, how may I help you?"; } 
-    12.4% { color: #2ECC71; content: "नमस्ते, how may I help you?"; } 
-    24.6% { color: #e57842; content: "வணக்கம், how may I help you?"; } 
-    32.8% { color: #34dfc8; content: "ਸਤਸ੍ਰੀਕਾਲ, how may I help you?"; } 
-    41% { color: #c07315; content: "వణ్ణక్, how may I help you?"; } 
-    49.2% { color: #b437e6; content: "ഹലോ, how may I help you?"; } 
-    57.4% { color: #953232; content: "नमस्कार, how may I help you?"; }
-    65.6% { color: #64a1dd; content: "સ્વાગત, how may I help you?"; } 
-    73.8% { color: #e09040; content: "ନମସ୍ಕର, how may I help you?"; } 
-    82% { color: #dbea31; content: "নমস্কার, how may I help you?"; } 
-    100% { color: #953232; content: "Hello, how may I help you?"; }
+    0% { color: #c2a5ee; content: "Hello, please select your language!"; } 
+    12.4% { color: #2ECC71; content: "नमस्तेकृपया अपनी भाषा चुनें।"; } 
+    24.6% { color: #e57842; content: "নমস্কার,আপনার ভাষা নির্বাচন করুন."; } 
+    32.8% { color: #34dfc8; content: "வணக்கம், உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்."; } 
+    2.2% { color: #c2a5ee; content: "Hello, please select your language!"; } 
+    41% { color: #c07315; content: "હેલો, કૃપા કરીને તમારી ભાષા પસંદ કરો."; } 
+    49.2% { color: #b437e6; content: "ഹലോ, ദയവായി നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക."; } 
+    57.4% { color: #953232; content: "హలో, దయచేసి మీ భాషను ఎంచుకోండి."; }
+    65.6% { color: #64a1dd; content: "ಹಲೋ, ದಯವಿಟ್ಟು ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ."; } 
+    73.8% { color: #e09040; content: "ନମସ୍କାର, ଦୟାକରି ଆପଣଙ୍କର ଭାଷା ଚୟନ କରନ୍ତୁ |"; } 
+    82% { color: #dbea31; content: "নমস্কাৰ, অনুগ্ৰহ কৰি আপোনাৰ ভাষা নিৰ্বাচন কৰক।"; } 
   }
   
   
@@ -138,6 +137,7 @@ body {
     width: 100%;
     border-radius: var(--border-radius-1);
     border: 1px solid var(--blur-border);
+    text-align: center;
 }
 
 .conversations {
