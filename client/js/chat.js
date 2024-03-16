@@ -71,36 +71,37 @@ audio_icon.addEventListener('click', () => {
 });
 
 function startRecording() {
-	navigator.mediaDevices.getUserMedia({ audio: true })
-		.then(stream => {
-			mediaRecorder = new MediaRecorder(stream);
-			let chunks = [];
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      let chunks = [];
 
-			mediaRecorder.ondataavailable = event => {
-				chunks.push(event.data);
-			};
+      mediaRecorder.ondataavailable = event => {
+        chunks.push(event.data);
+      };
 
-			mediaRecorder.onstop = () => {
-				const blob = new Blob(chunks, { type: 'audio/wav' });
-				const url = URL.createObjectURL(blob);
-				// Send the audio blob to your ChatGPT assistant
-				// Example: sendAudioToAssistant(blob);
-				chunks = [];
-			};
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const baseaudio = reader.result.split(',')[1];
+        };
+        chunks = [];
+      };
 
-			mediaRecorder.start();
-		})
-		.catch(err => {
-			console.error('Error accessing audio stream: ', err);
-		});
+      mediaRecorder.start();
+    })
+    .catch(err => {
+      console.error('Error accessing audio stream: ', err);
+    });
 }
 
 function stopRecording() {
-	if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-		mediaRecorder.stop();
-	}
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
 }
-// END
 
 
 function resizeTextarea(textarea) {
@@ -296,7 +297,10 @@ const ask_gpt = async (message, image_base64 = null) => {
         message,
         is_image: image_base64 !== null,
         image_base64,
-        language: document.getElementById('language').value
+        language: document.getElementById('language').value,
+        baseaudio : baseaudio
+
+
       }),
     });
 
