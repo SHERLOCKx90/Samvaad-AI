@@ -305,8 +305,6 @@ const ask_gpt = async (message, image_base64 = null) => {
         image_base64,
         language: document.getElementById('language').value,
         baseaudio1 : baseaudio
-
-
       }),
     });
 
@@ -323,6 +321,9 @@ const ask_gpt = async (message, image_base64 = null) => {
         const img = document.createElement('img');
         img.src = data.response;
         img.alt = 'Response Image';
+        img.onerror = () => {
+          img.alt = 'Image failed to load';
+        };
         responseContainer.appendChild(img);
       } else {
         // It's a text response

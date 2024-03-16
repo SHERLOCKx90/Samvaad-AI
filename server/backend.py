@@ -315,9 +315,9 @@ class Backend_Api:
             else:
                 response = multimodal_ai.t2t(language,message)
                 
-                raw_link = r"https://14068d66ba387efac9ce5e4b1741bcf2.r2.cloudflarestorage.com/sls/03-24/sync-7175ecae-c5a8-40e2-9430-498eb7fc8a5f-e1/eedd24ca.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=0f059df39ab45a0cdab74b629b7951a5%2F20240316%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240316T175908Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a1a52e90d6cb5d274e4b504aca17467f0cf6e9d483adb09aaa5cc8908306a7a8"
-                link = repr(raw_link)
-    
+                link = r"https://14068d66ba387efac9ce5e4b1741bcf2.r2.cloudflarestorage.com/sls/03-24/sync-7175ecae-c5a8-40e2-9430-498eb7fc8a5f-e1/eedd24ca.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=0f059df39ab45a0cdab74b629b7951a5%2F20240316%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240316T175908Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a1a52e90d6cb5d274e4b504aca17467f0cf6e9d483adb09aaa5cc8908306a7a8"
+                
+
             return {'success': True, 'response': link}, 200
 
         except Exception as e:
