@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8">  
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0">
 	<meta name="description" content="A conversational AI system that listens, learns, and challenges">
@@ -19,8 +19,8 @@
 	<link rel="stylesheet"
 		href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/styles/base16/dracula.min.css">
 	<script>
-		const user_image = `<img src="/assets/img/download.jfif" alt="User Avatar">`;
-		const gpt_image = `<img src="/assets/img/guy.jpg" alt="GPT Avatar">`;
+		const user_image = `<img src="/assets/img/user.png" alt="User Avatar">`;
+		const gpt_image = `<img src="/assets/img/samvaad_logo.jpeg" alt="GPT Avatar">`;
 	</script>
 	<style>
 		.hljs {
@@ -47,12 +47,12 @@
 
 		/* Handle */
 		#message-input::-webkit-scrollbar-thumb {
-			background: #c7a2ff;
+			background: #756d52;
 		}
 
 		/* Handle on hover */
 		#message-input::-webkit-scrollbar-thumb:hover {
-			background: #8b3dff;
+			background: #797359;
 		}
 	</style>
 	<script src="/assets/js/highlight.min.js"></script>
@@ -65,19 +65,47 @@
 	<div class="gradient"></div>
 	<div class="row">
 		<div class="box conversations">
+
 			<div class="top">
+				
 				<button class="new_convo" onclick="new_conversation()">
-					<i class="fa-regular fa-plus"></i>
-					<!-- <span>New Conversation</span> -->
+				  <i class="fa-regular fa-plus"></i>
+				  <span>New</span>
 				</button>
+
+				<button class="clear_btn" onclick="delete_conversations()">
+				  <i class="fa-regular fa-trash"></i>
+				  <span>Clear</span>
+				</button>
+
 				<div class="spinner"></div>
+
 			</div>
+
 			<div class="bottom_buttons">
-				<button onclick="delete_conversations()">
-					<i class="fa-regular fa-trash"></i>
-					<span></span>
-				</button>
+				<div class="field">
+					<select name="language" id="language">
+						<option value="English" selected>English</option>
+						<option value="Hindi">Hindi</option>
+						<option value="Bengali">Bengali</option>
+						<option value="Tamil">Tamil</option>
+						<option value="Marathi">Marathi</option>
+						<option value="Marathi">Marathi</option>
+						<option value="Malyalam">Malyalam</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<span class="about">Research Mode</span>
+					<input type="checkbox" id="switch" />
+					<label class="switch-label" for="switch"></label>
+				</div>
+
+				<div class="field">
+					<i id="speakerToggle" class="fa-solid fa-volume-high speaker-button"></i>
+				</div>
 			</div>
+
 		</div>
 		<div class="conversation disable-scrollbars">
 			<div class="stop_generating stop_generating-hidden">
@@ -87,21 +115,9 @@
 				</button>
 			</div>
 
+			<!-- Main Conversation Box-->
 			<div class="box" id="messages">
-				<h1 id="greeting"></h1>
-				<div class="button-container">
-					<button class="custom-button">English</button>
-				    <button class="custom-button">हिंदी </button>
-				    <button class="custom-button">বাংলা</button>
-				    <button class="custom-button">اردو</button>
-				    <button class="custom-button">मराठी</button>
-				    <button class="custom-button">ગુજરાતી</button>
-				    <button class="custom-button">ਪੰਜਾਬੀ</button>
-				    <button class="custom-button">தமிழ்</button>
-				    <button class="custom-button">తెలుగు</button>
-				    <button class="custom-button">ಕನ್ನಡ</button>
-				    <button class="custom-button">മലയാളം</button>
-				</div>
+				<h1 id="greeting"> </h1>
 			</div>
 			
 			<div class="user-input">
@@ -130,27 +146,7 @@
 			</div>
 
 			<div class="buttons">
-				<div class="field">
-					<select name="language" id="language">
-						<option value="English" selected>English</option>
-						<option value="Hindi">Hindi</option>
-						<option value="Bengali">Bengali</option>
-						<option value="Tamil">Tamil</option>
-						<option value="Marathi">Marathi</option>
-						<option value="Marathi">Marathi</option>
-						<option value="Malyalam">Malyalam</option>
-					</select>
-				</div>
-
-				<!-- <div class="field">
-					<span class="about">Research Mode</span>
-					<input type="checkbox" id="switch" />
-					<label class="switch-label" for="switch"></label>
-				</div> -->
-
-				<div class="field">
-					<i id="speakerToggle" class="fa-solid fa-volume-high speaker-button"></i>
-				</div>
+				
 			</div>
 
 		</div>
@@ -158,10 +154,6 @@
 	<div class="mobile-sidebar">
 		<i class="fa-solid fa-bars"></i>
 	</div>
-	<div class="desktop-sidebar-toggle">
-		<i class="fa-solid fa-bars"></i>
-	  </div>
-	
 </body>
 
 </html>
