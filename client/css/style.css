@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
-    --colour-1: #000000;   /* main background color */
+    --colour-1:#160e1a;   /* main background color */
     --colour-2: #ccc; 
-    --colour-3: #ffffff;  /* text color */
+    --colour-3: #000000;  /* text color */
     --colour-4: #f0f0f0;
     --colour-5: #181818;
     --colour-6: #242424;
 
-    /* --accent: #8b3dff; */
-    --blur-bg: #292929;   /* box color */
-    --blur-border: #84719040;
-    --user-input: #b700ff;
-    --conversations: #c2a5ee; /* accent color (convo pane) */
+    /* --accent5C3D2E: #8b3dff; */
+    --blur-bg: #c7bebe;   /* box color */
+    --blur-border: #2D242;
+    --user-input: #000000;
+    --conversations: #000000; /* accent color (convo pane) */
 }
 
 :root {
@@ -138,6 +138,28 @@ body {
     border-radius: var(--border-radius-1);
     border: 1px solid var(--blur-border);
     text-align: center;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20%;
+}
+
+.custom-button {
+    background-color: #000000;
+    color: rgb(255, 252, 252);
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.custom-button:hover{
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
 .conversations {
