@@ -5,6 +5,7 @@ const query = (obj) =>
 
 let baseaudio; 
 let baseaudio1;
+let imageB64;
 const greeting = document.getElementById('greeting');
 const image_upload = document.getElementById('imgUploadInput')
 const audio_icon = document.getElementById('audioIcon');
@@ -113,6 +114,37 @@ function stopRecording() {
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.stop();
   }
+}
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const base64Image = convertToBase64(reader.result);
+      // Do something with the base64Image, e.g., send it to the server or display it
+      console.log(base64Image);
+
+      imageB64 = base64Image;
+      console.log(imageB64);
+    }
+    reader.readAsDataURL(file);
+  } else {
+    console.error('Please select an image file.');
+  }
+}
+
+function convertToBase64(imageData) {
+  // Split the base64 string into two parts
+  const parts = imageData.split(',');
+
+  // Check if the string is a valid base64 string with a data URI scheme
+  if (parts.length !== 2 || !parts[0].includes('data:image/')) {
+    throw new Error('Invalid image data');
+  }
+
+  // Return the base64 part of the string
+  return parts[1];
 }
 
 
