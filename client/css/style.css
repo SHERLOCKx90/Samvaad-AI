@@ -220,7 +220,10 @@ body {
     gap: 16px;
     flex: auto;
     min-width: 0;
+    max-height: 300px; /* Adjust the height as needed */
+    overflow-y: auto; /* Add overflow-y property for vertical scrolling */
 }
+
 
 .conversations .title {
     font-size: 14px;
@@ -332,7 +335,9 @@ body {
     background: transparent;
     border: 1px dashed var(--conversations);
     border-radius: var(--border-radius-1);
+    width: 37px; /* Adjust the width as needed */
 }
+
 
 .new_convo span {
     color: var(--colour-3);
@@ -535,7 +540,7 @@ select {
     background: transparent;
     border: 1px solid #c7a2ff;
     border-radius: var(--border-radius-1);
-    width: 100%;
+    width: 18%;
 }
 
 .bottom_buttons button span {
@@ -689,7 +694,37 @@ ul {
         height: 87vh
     }
 }
+.desktop-sidebar-toggle {
+    display: none;
+  }
+  
+  @media (min-width: 991px) {
+    .desktop-sidebar-toggle {
+      display: block;
+      position: absolute;
+      z-index: 100000;
+      top: 0;
+      left: 0;
+      margin: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background-color: var(--blur-bg);
+      border-radius: 10px;
+      border: 1px solid var(--blur-border);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.33s;
+    }
+  }
 
+.conversations.hidden {
+    display: none;
+  }
 
 .shown {
     display: flex;
@@ -699,6 +734,7 @@ ul {
 a:-webkit-any-link {
     color: var(--accent);
 }
+
 
 .conversation .user-input textarea {
     font-size: 15px;
@@ -783,6 +819,7 @@ a:-webkit-any-link {
     white-space: nowrap;
     width: 1px;
 }
+
 
 /* .color-picker>fieldset {
     border: 0;
