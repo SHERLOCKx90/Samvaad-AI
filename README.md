@@ -1,3 +1,7 @@
+
+
+![ee34e16e-eb7e-4fc1-bf29-50c7e56d8d50](https://github.com/FoxHound-DevsHouse/Samvaad-AI/assets/96812236/da0c4c92-82fe-4d67-8e26-c04df72996cd)
+
 # Samvaad AI: Multilingual and Multimodal AI Assistant for India
 
 ### *Built For Bharat ❤* 
