@@ -41,3 +41,6 @@ To run the Samvaad AI project locally, follow these steps:
 
 Contributions to the Samvaad AI project are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
+### Credits
+
+The base UI of this project was forked from a open-source public repo - chatgpt-clone (https://github.com/xtekky/chatgpt-clone)
