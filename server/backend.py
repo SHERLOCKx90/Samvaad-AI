@@ -430,11 +430,15 @@ class Backend_Api:
             if imgbase:
                 if output=="txt":
                     response = multimodal_ai.i2t(imgbase,message,language)
+                else:
+                    response = "This feauture is under development, feel free to contribute to our Open-Source Project"
             else:
                 if output=="txt":
                     response = multimodal_ai.t2t(language,message)
                 elif output=="img":
                     response = multimodal_ai.t2i(language,message)
+                else:
+                    response = "This feauture is under development, feel free to contribute to our Open-Source Project"
 
                 
                 
