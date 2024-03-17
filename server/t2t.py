@@ -3,7 +3,7 @@ import json
 
 class FireworksAI:
     def __init__(self):
-        self.api_key = "3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"  # Replace 'YOUR_API_KEY' with your actual API key
+        self.api_key = "D9qC7JJY93GHq4NClIiTGZ2X23TA8nSYwexHsVoXSsxzVKdZ"  # Replace 'YOUR_API_KEY' with your actual API key
         self.url = "https://api.fireworks.ai/inference/v1/chat/completions"
         self.headers = {
             "Accept": "application/json",

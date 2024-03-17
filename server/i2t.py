@@ -3,7 +3,7 @@ import json
 
 class FireworksAIClient:
     def __init__(self, url):
-        self.api_key = "3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"  # Your API key goes here
+        self.api_key = "D9qC7JJY93GHq4NClIiTGZ2X23TA8nSYwexHsVoXSsxzVKdZ"  # Your API key goes here
         self.url = url
         self.headers = {
             "Accept": "application/json",

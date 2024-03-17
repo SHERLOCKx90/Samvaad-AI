@@ -5,7 +5,7 @@ import base64
 class MultimodalAI:
     def __init__(self):
         # FireworksAI API credentials
-        self.fireworks_api_key = "3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"
+        self.fireworks_api_key = "D9qC7JJY93GHq4NClIiTGZ2X23TA8nSYwexHsVoXSsxzVKdZ"
         self.fireworks_url = "https://api.fireworks.ai/inference/v1/chat/completions"
         self.fireworks_headers = {
             "Accept": "application/json",
@@ -24,7 +24,7 @@ class MultimodalAI:
 
     class FireworksAIClient:
         def __init__(self, url):
-            self.api_key = "3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"
+            self.api_key = "D9qC7JJY93GHq4NClIiTGZ2X23TA8nSYwexHsVoXSsxzVKdZ"
             self.url = url
             self.headers = {
                 "Accept": "application/json",

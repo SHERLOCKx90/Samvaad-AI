@@ -2,6 +2,12 @@ from flask import request
 import requests
 import json
 import base64
+
+promptY = "SYSTEM PROMPT:You are a personal assistant who's name is Samvaad, who gives very accurate and long in detail answer, your goal is to democratize generative ai for billions of people by offering your generative AI services, USER PROMPT : "
+promptX = "Assistant : "
+promptZ = "Assistant (Give your answer in 2000 words) : "
+
+imgPrompt = "135mm IMAX UHD, 8k, f10, dslr, CANON/NIKON/SONY XXmm/XXXmm, ISO xxx, 1/250, 1 /500, 1/2000 etc, f1.4, f2.8, f4.0"
 class BhasaAPI:
     def __init__(self):
         self.base_url = "https://bhasa-api.onrender.com"
@@ -156,7 +162,10 @@ class Backend_Api:
     class MultimodalAI:
         def __init__(self):
             # FireworksAI API credentials
-            self.fireworks_api_key = "3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"
+
+            #old key -- 3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn
+            
+            self.fireworks_api_key = "4rFyL3QY1ro1TyPjAP5XEYA7vvxQCwAW29ZRmDkWql9gOdhq"
             self.fireworks_url = "https://api.fireworks.ai/inference/v1/chat/completions"
             self.fireworks_headers = {
                 "Accept": "application/json",
@@ -169,7 +178,7 @@ class Backend_Api:
             self.runpod_url = "https://api.runpod.ai/v2/sdxl/runsync"
             self.runpod_headers = {
                 "accept": "application/json",
-                "content-type": "application/json",
+                "content-type": "application/json", 
                 "authorization": self.runpod_api_key
             }
 
@@ -185,7 +194,7 @@ class Backend_Api:
                 "messages": [
                     {
                         "role": "user",
-                        "content": user_message
+                        "content": promptY+user_message+promptX
                     }
                 ]
             }
@@ -218,7 +227,7 @@ class Backend_Api:
         def generate_text_from_image(self, image_base64, user_message):
             payload = {
                 "model": "accounts/fireworks/models/firellava-13b",
-                "max_tokens": 512,
+                "max_tokens": 2048,
                 "top_p": 1,
                 "top_k": 40,
                 "presence_penalty": 0,
@@ -230,7 +239,7 @@ class Backend_Api:
                         "content": [
                             {
                                 "type": "text",
-                                "text": user_message
+                                "text": promptY+user_message+promptZ
                             },
                             {
                                 "type": "image_url",
@@ -264,7 +273,7 @@ class Backend_Api:
                     "messages": [
                         {
                             "role": "user",
-                            "content": user_message
+                            "content": promptY+user_message+promptX
                         }
                     ]
                 }
@@ -290,7 +299,7 @@ class Backend_Api:
                     "messages": [
                         {
                             "role": "user",
-                            "content": user_message
+                            "content": promptY+user_message+promptX
                         }
                     ]
                 }
@@ -298,16 +307,17 @@ class Backend_Api:
                 llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
                 translated_text = bhasa_api.nmt(llm_response, source_lang="en", target_lang=input_language)
                 return translated_text
+            
         def t2i(self,input_language,user_message):
             if input_language=="en":
                 payload = {
                     "input": {
-                    "prompt": user_message,
-                    "num_inference_steps": 50,
-                    "refiner_inference_steps": 60,
+                    "prompt": user_message+imgPrompt,
+                    "num_inference_steps": 40,
+                    "refiner_inference_steps": 30,
                     "width": 1024,
                     "height": 1024,
-                    "guidance_scale": 10,
+                    "guidance_scale": 7,
                     "strength": 0.5,
                     "seed": None,
                     "num_images": 1,
@@ -323,12 +333,12 @@ class Backend_Api:
                 translated_text = bhasa_api.nmt(user_message, source_lang=input_language, target_lang="en")
                 payload = {
                     "input": {
-                    "prompt": user_message,
-                    "num_inference_steps": 50,
-                    "refiner_inference_steps": 60,
+                    "prompt": translated_text+imgPrompt,
+                    "num_inference_steps": 40,
+                    "refiner_inference_steps": 30,
                     "width": 1024,
                     "height": 1024,
-                    "guidance_scale": 10,
+                    "guidance_scale": 7,
                     "strength": 0.5,
                     "seed": None,
                     "num_images": 1,
@@ -355,7 +365,7 @@ class Backend_Api:
                             "content": [
                                 {
                                     "type": "text",
-                                    "text": user_message
+                                    "text": promptY+user_message+promptZ
                                 },
                                 {
                                     "type": "image_url",
@@ -388,7 +398,7 @@ class Backend_Api:
                             "content": [
                                 {
                                     "type": "text",
-                                    "text": user_message
+                                    "text":  promptY+translated_text+promptZ
                                 },
                                 {
                                     "type": "image_url",
@@ -430,6 +440,7 @@ class Backend_Api:
             if imgbase:
                 if output=="txt":
                     response = multimodal_ai.i2t(imgbase,message,language)
+                    imgbase = ""
                 else:
                     response = "This feauture is under development, feel free to contribute to our Open-Source Project"
             else:
@@ -438,8 +449,7 @@ class Backend_Api:
                 elif output=="img":
                     response = multimodal_ai.t2i(language,message)
                 else:
-                    response = "This feauture is under development, feel free to contribute to our Open-Source Project"
-
+                    response = multimodal_ai.t2i(language,message)
                 
                 
 

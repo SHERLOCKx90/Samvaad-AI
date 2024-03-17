@@ -7,7 +7,7 @@ class TaskClassifier:
         self.headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Authorization": "Bearer 3J2VhOCg9nJF30zpLUJvlALsMAM0zG6b9KjJf1PhX7mx7GIn"
+            "Authorization": "Bearer D9qC7JJY93GHq4NClIiTGZ2X23TA8nSYwexHsVoXSsxzVKdZ"
         }
         self.payload = {
             "model": "accounts/fireworks/models/mixtral-8x7b-instruct",

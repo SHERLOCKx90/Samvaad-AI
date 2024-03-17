@@ -346,7 +346,8 @@ const ask_gpt = async (message, image_base64 = null) => {
         image_base64,
         language: document.getElementById('language').value,
         output: document.getElementById('mode').value,
-        baseaudio1 : baseaudio
+        baseaudio1 : baseaudio,
+        imagebase : imageB64
       }),
     });
 
