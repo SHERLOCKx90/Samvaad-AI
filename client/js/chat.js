@@ -1,17 +1,17 @@
 const query = (obj) =>
   Object.keys(obj)
     .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]))
-    .join("&");
+    .join("&"); 
 
 let baseaudio; 
 let baseaudio1;
-let imageB64;
-const greeting = document.getElementById('greeting');
-const image_upload = document.getElementById('imgUploadInput')
-const audio_icon = document.getElementById('audioIcon');
+let base64Image;
+const greeting = document.getElementById("greeting");
+const image_upload = document.getElementById("imgUploadInput");
+const audio_icon = document.getElementById("audioIcon");
 const colorThemes = document.querySelectorAll('[name="theme"]');
-const markdown = window.markdownit(); 
-const message_box = document.getElementById(`messages`);  
+const markdown = window.markdownit();
+const message_box = document.getElementById(`messages`);
 const message_input = document.getElementById(`message-input`);
 const box_conversations = document.querySelector(`.top`);
 const spinner = box_conversations.querySelector(".spinner");
@@ -22,8 +22,6 @@ const image_button = document.querySelector(`#image-button`);
 let prompt_lock = false;
 
 hljs.addPlugin(new CopyButtonPlugin());
-
-
 
 // sidebar TOGGLE FUNCTIONALITY
 const desktopSidebarToggle = document.querySelector(".desktop-sidebar-toggle");
@@ -36,19 +34,17 @@ desktopSidebarToggle.addEventListener("click", (event) => {
   window.scrollTo(0, 0);
 });
 
-
-
 function openFilePicker() {
-  const fileInput = document.getElementById('image-upload');
+  const fileInput = document.getElementById("image-upload");
   fileInput.click();
 }
 
-const fileInput = document.getElementById('image-upload');
-fileInput.addEventListener('change', handleImageUpload);
+const fileInput = document.getElementById("image-upload");
+fileInput.addEventListener("change", handleImageUpload);
 
 function handleImageUpload(event) {
   const file = event.target.files[0];
-  if (file && file.type.startsWith('image/')) {
+  if (file && file.type.startsWith("image/")) {
     // Handle the uploaded image here
     const reader = new FileReader();
     reader.onload = function () {
@@ -56,102 +52,97 @@ function handleImageUpload(event) {
       const imageData = reader.result;
       // Do something with the imageData, e.g., send it to the server or display it
       console.log(imageData);
-    }
+    };
     reader.readAsDataURL(file);
   } else {
     // Handle the case where the selected file is not an image
-    console.error('Please select an image file.');
+    console.error("Please select an image file.");
   }
 }
 
-	
 //	AUDIO INPUT FUNCTIONALITY
 let isRecording = false;
 let mediaRecorder = null;
 
-audio_icon.addEventListener('click', () => {
-	if (!isRecording) {
-		startRecording();
-		isRecording = true;
-		audio_icon.classList.add('recording');
-	} else {
-		stopRecording();
-		isRecording = false;
-		audio_icon.classList.remove('recording');
-	}
+audio_icon.addEventListener("click", () => {
+  if (!isRecording) {
+    startRecording();
+    isRecording = true;
+    audio_icon.classList.add("recording");
+  } else {
+    stopRecording();
+    isRecording = false;
+    audio_icon.classList.remove("recording");
+  }
 });
 
 function startRecording() {
-
-  
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
+  navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .then((stream) => {
       mediaRecorder = new MediaRecorder(stream);
       let chunks = [];
 
-      mediaRecorder.ondataavailable = event => {
+      mediaRecorder.ondataavailable = (event) => {
         chunks.push(event.data);
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: "audio/webm" });
         const reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onloadend = () => {
-          baseaudio = reader.result.split(',')[1];
+          baseaudio = reader.result.split(",")[1];
         };
         chunks = [];
       };
 
-      console.log(baseaudio)
+      console.log(baseaudio);
       mediaRecorder.start();
     })
-    .catch(err => {
-      console.error('Error accessing audio stream: ', err);
+    .catch((err) => {
+      console.error("Error accessing audio stream: ", err);
     });
 }
 
 function stopRecording() {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
     mediaRecorder.stop();
   }
 }
 
 function handleImageUpload(event) {
+
   const file = event.target.files[0];
-  if (file && file.type.startsWith('image/')) {
+
+  if (file && file.type.startsWith("image/")) {
     const reader = new FileReader();
     reader.onload = function () {
-      const base64Image = convertToBase64(reader.result);
-      // Do something with the base64Image, e.g., send it to the server or display it
+      base64Image = convertToBase64(reader.result);
       console.log(base64Image);
-
-      imageB64 = base64Image;
-      console.log(imageB64);
-    }
+    };
     reader.readAsDataURL(file);
   } else {
-    console.error('Please select an image file.');
+    console.error("Please select an image file.");
   }
 }
 
 function convertToBase64(imageData) {
   // Split the base64 string into two parts
-  const parts = imageData.split(',');
+  const parts = imageData.split(",");
 
   // Check if the string is a valid base64 string with a data URI scheme
-  if (parts.length !== 2 || !parts[0].includes('data:image/')) {
-    throw new Error('Invalid image data');
+  if (parts.length !== 2 || !parts[0].includes("data:image/")) {
+    throw new Error("Invalid image data");
   }
 
   // Return the base64 part of the string
   return parts[1];
 }
 
-
 function resizeTextarea(textarea) {
-  textarea.style.height = '80px';
-  textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+  textarea.style.height = "80px";
+  textarea.style.height = Math.min(textarea.scrollHeight, 200) + "px";
 }
 
 const format = (text) => {
@@ -161,11 +152,11 @@ const format = (text) => {
 message_input.addEventListener("blur", () => {
   window.scrollTo(0, 0);
 });
- 
+
 const delete_conversations = async () => {
   localStorage.clear();
   await new_conversation();
-};  
+};
 
 const handle_ask = async () => {
   message_input.style.height = `80px`;
@@ -221,8 +212,8 @@ const show_option = async (conversation_id) => {
 
   conv.style.display = "none";
   yes.style.display = "block";
-  not.style.display = "block"; 
-}
+  not.style.display = "block";
+};
 
 const hide_option = async (conversation_id) => {
   const conv = document.getElementById(`conv-${conversation_id}`);
@@ -231,14 +222,14 @@ const hide_option = async (conversation_id) => {
 
   conv.style.display = "block";
   yes.style.display = "none";
-  not.style.display = "none"; 
-}
+  not.style.display = "none";
+};
 
 const delete_conversation = async (conversation_id) => {
   localStorage.removeItem(`conversation:${conversation_id}`);
 
   const conversation = document.getElementById(`convo-${conversation_id}`);
-    conversation.remove();
+  conversation.remove();
 
   if (window.conversation_id == conversation_id) {
     await new_conversation();
@@ -257,8 +248,8 @@ const set_conversation = async (conversation_id) => {
 };
 
 function hideGreeting() {
-  greeting.classList.remove('show-greeting');
-  greeting.classList.add('hide-greeting');
+  greeting.classList.remove("show-greeting");
+  greeting.classList.add("hide-greeting");
 }
 
 const new_conversation = async () => {
@@ -271,13 +262,12 @@ const new_conversation = async () => {
 
   // SHOWS GREETING ON NEW CONVO
   console.log(greeting.classList);
-  greeting.classList.remove('hide-greeting');
-  greeting.classList.add('show-greeting');
+  greeting.classList.remove("hide-greeting");
+  greeting.classList.add("show-greeting");
   console.log(greeting.classList);
 
   hideGreeting(); // Call the hideGreeting function here
 };
-
 
 const ask_gpt = async (message, image_base64 = null) => {
   try {
@@ -296,8 +286,8 @@ const ask_gpt = async (message, image_base64 = null) => {
     stop_generating.classList.remove(`stop_generating-hidden`);
 
     // HIDES GREETING MESSAGE ON CONVO START
-	  greeting.classList.remove('show-greeting');
-	  greeting.classList.add('hide-greeting');
+    greeting.classList.remove("show-greeting");
+    greeting.classList.add("hide-greeting");
 
     message_box.innerHTML += `
             <div class="message">
@@ -333,8 +323,6 @@ const ask_gpt = async (message, image_base64 = null) => {
     await new Promise((r) => setTimeout(r, 1000));
     window.scrollTo(0, 0);
 
-    
-
     const response = await fetch(`/backend-api/v2/conversation`, {
       method: `POST`,
       headers: {
@@ -344,29 +332,29 @@ const ask_gpt = async (message, image_base64 = null) => {
         message,
         is_image: image_base64 !== null,
         image_base64,
-        language: document.getElementById('language').value,
-        output: document.getElementById('mode').value,
-        baseaudio1 : baseaudio,
-        imagebase : imageB64
+        language: document.getElementById("language").value,
+        output: document.getElementById("mode").value,
+        base64Audio: baseaudio,
+        base64Image: base64Image,
       }),
     });
 
     ///
 
     const data = await response.json();
-    
+
     if (data.success) {
       const responseContainer = document.getElementById(`gpt_${window.token}`);
-      responseContainer.innerHTML = ''; // Clear the previous response
+      responseContainer.innerHTML = ""; // Clear the previous response
 
-      if (data.response.includes('cloudflarestorage')) {
+      if (data.response.includes("cloudflarestorage")) {
         // It's an image
-        const img = document.createElement('img');
+        const img = document.createElement("img");
         img.src = data.response;
-        img.alt = 'Response Image';
-        img.className = 'response-image'
+        img.alt = "Response Image";
+        img.className = "response-image";
         img.onerror = () => {
-          img.alt = 'Image failed to load';
+          img.alt = "Image failed to load";
         };
         responseContainer.appendChild(img);
       } else {
@@ -387,7 +375,7 @@ const ask_gpt = async (message, image_base64 = null) => {
       console.error(data.error);
     }
 
-    /// 
+    ///
 
     message_box.scrollTop = message_box.scrollHeight;
     await remove_cancel_button();
@@ -423,12 +411,10 @@ const ask_gpt = async (message, image_base64 = null) => {
   }
 };
 
-  
 function hideGreeting() {
-    greeting.classList.remove('show-greeting');
-    greeting.classList.add('hide-greeting');
+  greeting.classList.remove("show-greeting");
+  greeting.classList.add("hide-greeting");
 }
-
 
 const load_conversation = async (conversation_id) => {
   console.log("load_convn() loaded");
@@ -595,12 +581,12 @@ window.onload = async () => {
     }
   }
 
-message_input.addEventListener(`keydown`, async (evt) => {
+  message_input.addEventListener(`keydown`, async (evt) => {
     if (prompt_lock) return;
     if (evt.keyCode === 13 && !evt.shiftKey) {
-        evt.preventDefault();
-        console.log('pressed enter');
-        await handle_ask();
+      evt.preventDefault();
+      console.log("pressed enter");
+      await handle_ask();
     } else {
       message_input.style.removeProperty("height");
       message_input.style.height = message_input.scrollHeight + 4 + "px";

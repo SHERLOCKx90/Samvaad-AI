@@ -1,13 +1,21 @@
 from flask import request
 import requests
 import json
-import base64
+import base64 
+from bhashini import BhashaAPI
 
 promptY = "SYSTEM PROMPT:You are a personal assistant who's name is Samvaad, who gives very accurate and long in detail answer, your goal is to democratize generative ai for billions of people by offering your generative AI services, USER PROMPT : "
 promptX = "Assistant : "
 promptZ = "Assistant (Give your answer in 2000 words) : "
 
-imgPrompt = "135mm IMAX UHD, 8k, f10, dslr, CANON/NIKON/SONY XXmm/XXXmm, ISO xxx, 1/250, 1 /500, 1/2000 etc, f1.4, f2.8, f4.0"
+imgPrompt = "135mm IMAX UHD, 8k, f10, dslr, CANON/NIKON/SONY XXmm/XXXmm, ISO xxx, 1/250, 1 /500, 1/2000 etc, f1.4, f2.8, f4.0??"
+
+
+# ========== TO TEST IMPORTING FROM OTHER FILES =============
+inst = BhashaAPI()
+inst.test()
+# ===========================================================
+
 class BhasaAPI:
     def __init__(self):
         self.base_url = "https://bhasa-api.onrender.com"
@@ -415,16 +423,7 @@ class Backend_Api:
                 llm_response = response.json()['choices'][0]['message']['content'].replace('\\n', '')
                 translated_text1 = bhasa_api.nmt(llm_response, source_lang="en", target_lang=language)
                 return translated_text1
-                
-
-                
-    
-
             
-
-
-    
-
 
     def _conversation(self):
         try:
@@ -432,7 +431,7 @@ class Backend_Api:
             is_image = request.json.get('is_image', False)
             language = request.json.get('language', 'English')
             output = request.json.get('output')
-            imgbase = request.json.get('imagebase')
+            imgbase = request.json.get('base64Image')
 
             multimodal_ai = self.MultimodalAI()
             response = ''
