@@ -1,6 +1,6 @@
 
 
-![ee34e16e-eb7e-4fc1-bf29-50c7e56d8d50](https://github.com/FoxHound-DevsHouse/Samvaad-AI/assets/96812236/da0c4c92-82fe-4d67-8e26-c04df72996cd)
+<!--![ee34e16e-eb7e-4fc1-bf29-50c7e56d8d50](https://github.com/FoxHound-DevsHouse/Samvaad-AI/assets/96812236/da0c4c92-82fe-4d67-8e26-c04df72996cd) -->
 
 # Samvaad AI: Multilingual and Multimodal AI Assistant for India
 
@@ -37,7 +37,7 @@ To run the Samvaad AI project locally, follow these steps:
 1. Clone the repository: `git clone https://github.com/FoxHound-DevsHouse/Samvaad-AI.git`
 2. Navigate to the project directory: `cd samvaad-ai`
 3. Install the required dependencies: `pip install -r requirements.txt`
-4. Set up the necessary API keys and credentials for FireworksAI, Bhasa API, and RunPod.
+4. Set up the necessary API keys and credentials for FireworksAI, Bhasha API, and RunPod.
 5. Run the Flask application: `python run.py`
 6. Open your web browser and navigate to `http://localhost:1338` to access the Samvaad AI application.
 
